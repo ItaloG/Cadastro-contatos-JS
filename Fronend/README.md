@@ -5,8 +5,8 @@
 Conteúdos
 ==========
 <!--ts-->
-   * [DataBase](#)
-   * [JavaScript](#)
+   * [DataBase](https://github.com/ItaloG/Cadastro-contatos-JS/blob/main/Fronend/db.sql)
+   * [JavaScript](https://github.com/ItaloG/Cadastro-contatos-JS/blob/main/Fronend/contatos.js)
 <!--te-->
 
 ### 🛠 Tecnologias
@@ -15,6 +15,6 @@ Conteúdos
 - CSS
 - JavaScript
 - mysql
-- API(https://github.com/fernandoleonid/apiphp)
+- [API](https://github.com/fernandoleonid/apiphp)
 
 #### 🚀Teste aqui: 
