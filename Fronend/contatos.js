@@ -3,7 +3,6 @@
 const getContact = async (url) => {
     const response = await fetch(url);
     const json = await response.json();
-    // console.log(json.data[1])
     return json.data;
 }
 
@@ -13,8 +12,16 @@ const createContact = async (contato) => {
         method: 'POST',
         body: JSON.stringify(contato)
     }
-    const teste = await fetch(url, options);
-    console.log(teste.json())
+    await fetch(url, options);
+}
+
+const updateContact = async (contact, id) => {
+    const url = `http://127.0.0.1/Aula-JS/Backend/apiphp/contatos/${id}`;
+    const options = {
+        method: 'PUT',
+        body: JSON.stringify(contact)
+    }
+    await fetch(url, options);
 }
 
 const createRow = (contato) => {
@@ -51,6 +58,7 @@ const clearFields = () => {
     document.getElementById('email').value = "";
     document.getElementById('cidade').value = "";
     document.getElementById('estado').value = "";
+    document.getElementById('nome').dataset.idcontact = "new";
 }
 
 const isValidForm = () => document.querySelector('main>form').reportValidity();
@@ -64,64 +72,69 @@ const saveContact = async () => {
             'cidade': document.getElementById('cidade').value,
             'estado': document.getElementById('estado').value
         }
-        await createContact(newContact);
+        const idContact = document.getElementById('nome').dataset.idcontact
+        if (idContact == "new") {
+            await createContact(newContact);
+        } else {
+            await updateContact(newContact, idContact);
+            document.getElementById('deletar').disabled = false
+        }
         updateTable();
         clearFields();
     }
 }
 
-const getID = () =>{
-    const answer = prompt('Insira um ID');
-    return answer;
-} 
 
-const deleteClient = async () => {
-    const ID = getID();
 
-    const url = `http://127.0.0.1/Aula-JS/Backend/apiphp/contatos/${ID}`;
-    const options = {
-        method: 'DELETE',
+const deleteContact = async () => {
+    const ID = prompt('Insira um ID para deletar');
+
+    if (ID > 0) {
+        const url = `http://127.0.0.1/Aula-JS/Backend/apiphp/contatos/${ID}`;
+
+        const options = {
+            method: 'DELETE',
+        }
+
+        await fetch(url, options);
+        updateTable();
+    }else{
+        alert('ID não encontrado')
     }
-    await fetch(url, options);
-    updateTable();
 }
 
-const updateContact = async () => {
-    const ID = getID();
+const fillFilds = (contato) => {
 
-    const url = `http://127.0.0.1/Aula-JS/Backend/apiphp/contatos/${ID}`;
-    const contato = await getContact(url);
-
-    const inputs = Array.from(document.querySelectorAll('main>form input'))
-    const contact = {
-        'id'    : ID,
-        'nome'  : inputs[0].value = contato[0].nome,
-        'email' : inputs[1].value = contato[0].email,
-        'cidade': inputs[2].value = contato[0].cidade,
-        'estado': inputs[3].value = contato[0].estado,
-    }
-
-    const options = {
-        method: 'PUT',
-        body: JSON.stringify(contact)
-    };
-
-    const optionsDelete = {
-        method: 'DELETE'
-    }
-
-    await fetch(url, optionsDelete);
-
-    await fetch(url, options);
+    document.getElementById('nome').value = contato.nome
+    document.getElementById('email').value = contato.email
+    document.getElementById('cidade').value = contato.cidade
+    document.getElementById('estado').value = contato.estado
+    document.getElementById('nome').dataset.idcontact = contato.id
 }
+
+
+const editContact = async () => {
+    const ID = prompt('Insira um ID para editar');
+    if (ID > 0) {
+        const url = `http://127.0.0.1/Aula-JS/Backend/apiphp/contatos/${ID}`;
+        const contato = await getContact(url);
+        if (contato == "id não encontrado") {
+            alert("ID não encontrado");
+        } else {
+            fillFilds(contato[0])
+            document.getElementById('deletar').disabled = true
+        }
+
+    }
+}
+
+updateTable();
 
 document.getElementById('salvar')
     .addEventListener('click', saveContact);
 
 document.getElementById('deletar')
-    .addEventListener('click', deleteClient);
+    .addEventListener('click', deleteContact);
 
 document.getElementById('editar')
-    .addEventListener('click', updateContact);
-
-updateTable();
+    .addEventListener('click', editContact);
